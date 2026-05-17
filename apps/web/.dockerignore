@@ -4,8 +4,10 @@ out/
 dist/
 coverage/
 .env
-.env.*
+.env.local
+.env.*.local
 !.env.example
+!.env.production
 README.md
 Dockerfile
 .dockerignore
