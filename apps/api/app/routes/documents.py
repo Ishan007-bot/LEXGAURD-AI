@@ -1,10 +1,10 @@
 """HTTP routes for document creation, retrieval, and listing."""
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, File, Query, Request, UploadFile
 
 from app.auth import AuthenticatedUser, require_user
 from app.middleware.rate_limit import limiter
-from app.models import Document
+from app.models import Document, DocumentType
 from app.repositories.documents import FirestoreDocumentRepository
 from app.schemas.document import (
     ClauseDTO,
@@ -15,7 +15,7 @@ from app.schemas.document import (
     DocumentListResponse,
     DocumentWithClausesDTO,
 )
-from app.services import pipeline
+from app.services import file_extractor, pipeline
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
@@ -74,6 +74,37 @@ async def create_from_upload(
         filename=payload.filename,
         content_type=payload.content_type,
         size_bytes=payload.size_bytes,
+    )
+    return _detailed(doc)
+
+
+@router.post(
+    "/from-file",
+    response_model=DocumentWithClausesDTO,
+    status_code=201,
+    summary="Upload a PDF/DOCX/TXT directly — text is extracted server-side.",
+)
+@limiter.limit("10/minute")
+async def create_from_file(
+    request: Request,
+    file: UploadFile = File(...),
+    user: AuthenticatedUser = Depends(require_user),
+) -> DocumentWithClausesDTO:
+    """Local-dev alternative to the signed-URL flow.
+
+    Accepts a multipart upload, extracts text in-process with pypdf /
+    python-docx, then runs the same pipeline as paste-text.
+    """
+    content = await file.read()
+    text = file_extractor.extract_text(
+        content=content,
+        content_type=file.content_type or "",
+    )
+    doc = pipeline.process_pasted_text(
+        user_id=user.uid,
+        text=text,
+        document_type=DocumentType.OTHER,
+        title=file.filename,
     )
     return _detailed(doc)
 

@@ -233,6 +233,27 @@ export const api = {
       token,
     });
   },
+
+  async uploadFile(file: File, token: string): Promise<DocumentWithClausesDTO> {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await fetch(`${API_BASE}/documents/from-file`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+    const ct = response.headers.get('content-type') ?? '';
+    const payload = ct.includes('application/json') ? await response.json() : null;
+    if (!response.ok) {
+      throw new ApiError(
+        response.status,
+        (payload as ApiErrorBody) ?? {
+          error: { code: 'http', message: response.statusText },
+        },
+      );
+    }
+    return payload as DocumentWithClausesDTO;
+  },
 };
 
 export interface SimulateResponse {

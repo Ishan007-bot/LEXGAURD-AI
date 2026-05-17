@@ -66,26 +66,7 @@ export default function AnalyzePage() {
 
       if (tab === 'upload') {
         if (!file) return;
-        const init = await api.initUpload(
-          { filename: file.name, content_type: file.type, size_bytes: file.size },
-          token,
-        );
-        const put = await fetch(init.upload_url, {
-          method: init.method,
-          headers: init.headers,
-          body: file,
-        });
-        if (!put.ok) throw new Error(`Upload failed (${put.status}).`);
-        const doc = await api.createFromUpload(
-          {
-            document_id: init.document_id,
-            gcs_object: init.gcs_object,
-            filename: file.name,
-            content_type: file.type,
-            size_bytes: file.size,
-          },
-          token,
-        );
+        const doc = await api.uploadFile(file, token);
         router.push(`/documents/${doc.id}`);
         return;
       }
