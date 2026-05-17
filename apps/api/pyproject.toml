@@ -1,0 +1,138 @@
+[project]
+name = "lexguard-api"
+version = "0.1.0"
+description = "LexGuard adversarial multi-agent contract intelligence API"
+requires-python = ">=3.12,<3.13"
+readme = "README.md"
+
+dependencies = [
+    "fastapi==0.115.0",
+    "uvicorn[standard]==0.30.6",
+    "pydantic==2.9.2",
+    "pydantic-settings==2.5.2",
+    "python-multipart==0.0.12",
+    "httpx==0.27.2",
+    "tenacity==8.5.0",
+    "structlog==24.4.0",
+    "orjson==3.10.7",
+    "google-cloud-aiplatform==1.69.0",
+    "google-cloud-firestore==2.18.0",
+    "google-cloud-storage==2.18.2",
+    "google-cloud-documentai==2.31.0",
+    "google-cloud-dlp==3.23.0",
+    "google-cloud-secret-manager==2.20.2",
+    "google-cloud-texttospeech==2.21.1",
+    "firebase-admin==6.5.0",
+    "langgraph==0.2.34",
+    "langchain-core==0.3.10",
+    "cachetools==5.5.0",
+    "slowapi==0.1.9",
+    "beautifulsoup4==4.12.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.3",
+    "pytest-asyncio==0.24.0",
+    "pytest-cov==5.0.0",
+    "pytest-mock==3.14.0",
+    "respx==0.21.1",
+    "ruff==0.6.9",
+    "mypy==1.11.2",
+    "bandit==1.7.10",
+    "types-redis==4.6.0.20240903",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+# -----------------------------------------------------------------------------
+# Ruff: linter + formatter
+# -----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "C4",            # comprehensions
+    "UP",            # pyupgrade
+    "S",             # bandit-lite
+    "ASYNC",         # async correctness
+    "RUF",           # ruff-specific
+    "SIM",           # simplify
+    "TID",           # tidy imports
+    "PL",            # pylint subset
+]
+ignore = [
+    "S101",  # asserts ok in tests
+    "PLR0913",  # too many args
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S105", "S106", "PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# -----------------------------------------------------------------------------
+# Pytest
+# -----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "-ra",
+    "--cov=app",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=80",
+]
+filterwarnings = ["error", "ignore::DeprecationWarning"]
+
+# -----------------------------------------------------------------------------
+# Mypy
+# -----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+exclude = ["build/", "dist/", ".venv/"]
+
+# -----------------------------------------------------------------------------
+# Coverage
+# -----------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["app"]
+branch = true
+omit = ["app/main.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]
+
+# -----------------------------------------------------------------------------
+# Bandit
+# -----------------------------------------------------------------------------
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101"]

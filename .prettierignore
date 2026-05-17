@@ -1,0 +1,10 @@
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.venv/
+.pnpm-store/
+pnpm-lock.yaml
+**/*.min.js
+**/*.min.css

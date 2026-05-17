@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * LexGuard — editorial-legal aesthetic.
+ * Parchment, ink, redline. Sharp corners. Hairline rules.
+ */
+
+:root {
+  /* Surfaces */
+  --background: 40 30% 96%;          /* warm parchment */
+  --surface: 40 30% 99%;             /* card */
+  --surface-sunk: 40 28% 92%;        /* recessed panel */
+  --ink: 0 0% 7%;                    /* deep ink for text */
+  --ink-soft: 30 8% 28%;             /* secondary text */
+  --rule: 30 10% 80%;                /* hairlines */
+
+  /* Accent */
+  --redline: 355 75% 42%;            /* the only sharp accent */
+  --redline-deep: 355 70% 30%;
+  --verdict: 38 65% 38%;             /* aged-gold judge accent */
+  --evidence: 45 30% 88%;            /* highlighted clause bg */
+
+  /* Risk palette — desaturated, document-friendly */
+  --risk-critical: 355 75% 42%;
+  --risk-high: 20 70% 45%;
+  --risk-medium: 38 65% 45%;
+  --risk-low: 145 35% 35%;
+  --risk-info: 215 30% 40%;
+
+  /* Map shadcn tokens for existing primitives */
+  --foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--background);
+  --muted: var(--surface-sunk);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--evidence);
+  --accent-foreground: var(--ink);
+  --destructive: var(--redline);
+  --destructive-foreground: var(--background);
+  --border: var(--rule);
+
+  color-scheme: light;
+}
+
+.dark {
+  /* Night court — warm ink, not blue-black */
+  --background: 28 12% 8%;
+  --surface: 28 10% 11%;
+  --surface-sunk: 28 10% 14%;
+  --ink: 40 30% 94%;                 /* parchment-toned text */
+  --ink-soft: 35 12% 65%;
+  --rule: 28 10% 24%;
+
+  /* Accents stay vivid */
+  --redline: 355 85% 65%;
+  --redline-deep: 355 80% 55%;
+  --verdict: 42 75% 65%;
+  --evidence: 28 12% 16%;
+
+  --risk-critical: 355 85% 65%;
+  --risk-high: 22 80% 62%;
+  --risk-medium: 40 75% 60%;
+  --risk-low: 145 45% 60%;
+  --risk-info: 215 45% 68%;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    font-feature-settings: "ss01", "ss02", "cv11", "cv09";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background:
+      radial-gradient(1200px 600px at 100% -10%, hsl(var(--evidence) / 0.5), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, hsl(var(--evidence) / 0.4), transparent 60%),
+      hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-mono), ui-monospace, "JetBrains Mono", "SFMono-Regular",
+      "Liberation Mono", Menlo, monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    /* Smooth fade when toggling theme */
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  /* Make hairlines + surfaces ease alongside body */
+  *, *::before, *::after {
+    border-color: hsl(var(--rule));
+    transition: border-color 0.4s ease;
+  }
+  ::selection {
+    background: hsl(var(--redline));
+    color: hsl(var(--background));
+  }
+  *:focus-visible {
+    outline: 2px solid hsl(var(--redline));
+    outline-offset: 3px;
+    border-radius: 0;
+  }
+
+  /* Typographic primitives */
+  .display {
+    font-family: var(--font-display), "Instrument Serif", "Times New Roman", serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+  }
+  .label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--ink-soft));
+  }
+}
+
+@layer utilities {
+  .paper-grain {
+    background-image:
+      radial-gradient(hsl(var(--ink) / 0.04) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  .hairline {
+    border-color: hsl(var(--rule));
+    border-width: 1px;
+  }
+  .ink-rule {
+    background-image: linear-gradient(to right, hsl(var(--ink)) 0 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+  }
+  .strike-redline {
+    text-decoration-line: line-through;
+    text-decoration-color: hsl(var(--redline));
+    text-decoration-thickness: 2px;
+  }
+}
