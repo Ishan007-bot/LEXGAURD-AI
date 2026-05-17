@@ -11,7 +11,7 @@ User → Next.js (Cloud Run) → FastAPI (Cloud Run) → LangGraph orchestrator 
                                   └── Cloud Storage (uploads, reports)
 
 Caching: in-process `cachetools.TTLCache` per Cloud Run instance, with Firestore
-as the durable layer. Memorystore was intentionally dropped — see docs/budget.md.
+as the durable layer.
 ```
 
 ## Agent graph (LangGraph)
