@@ -22,7 +22,7 @@ dependencies = [
     "google-cloud-dlp==3.23.0",
     "google-cloud-secret-manager==2.20.2",
     "google-cloud-texttospeech==2.21.1",
-    "firebase-admin==6.5.0",
+    "firebase-admin==7.4.0",
     "langgraph==0.2.34",
     "langchain-core==0.3.10",
     "cachetools==5.5.0",
